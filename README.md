@@ -97,6 +97,12 @@ Extrato: `GET /api/v1/settlements?from=2026-09-01T00:00:00Z&to=2026-10-01T00:00:
 
 ## Arquitetura
 
+Diagramas C4:
+
+- [Nível 1 — Contexto](docs/c4-context.md)
+- [Nível 2 — Containers](docs/c4-containers.md)
+- [Diagrama Entidade-Relacionamento](docs/er-diagram.md)
+
 - `controller`: contrato HTTP e validação dos DTOs.
 - `service`: casos de uso, transações e regras de aplicação.
 - `strategy`: spread específico de cada recebível.
@@ -126,3 +132,12 @@ cd backend && mvn test
 ```
 
 Os testes iniciais verificam o spread por estratégia e a aplicação da conversão cambial ao final do cálculo.
+
+## Integração contínua
+
+O workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) é executado em pull requests e em pushes para `main` ou `master`. Ele executa:
+
+- testes do backend com `mvn test` em Java 21;
+- lint do frontend com ESLint;
+- build de produção do frontend;
+- build das imagens Docker do backend e do frontend, sem publicá-las.
