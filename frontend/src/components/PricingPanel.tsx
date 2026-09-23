@@ -13,7 +13,8 @@ export function PricingPanel(){
   const queryClient=useQueryClient();const [form,setForm]=useState(initial);const [assignorId,setAssignorId]=useState<string>(uuid);const [idempotencyKey,setKey]=useState<string>(uuid);const [notice,setNotice]=useState('');
   const debounced=useDebounce(form);const valid=useMemo(()=>form.faceValue>0&&!!form.dueDate&&form.assetCurrency.length===3&&form.settlementCurrency.length===3,[form]);
   const simulation=useMutation({mutationFn:simulatePricing});
-  useEffect(()=>{if(valid)simulation.mutate({...debounced,assetCurrency:debounced.assetCurrency.toUpperCase(),settlementCurrency:debounced.settlementCurrency.toUpperCase()})},[debounced,valid]);
+  const {mutate:runSimulation}=simulation;
+  useEffect(()=>{if(valid)runSimulation({...debounced,assetCurrency:debounced.assetCurrency.toUpperCase(),settlementCurrency:debounced.settlementCurrency.toUpperCase()})},[debounced,valid,runSimulation]);
   const settlement=useMutation({mutationFn:createSettlement,onSuccess:data=>{setNotice(`Liquidação ${data.id.slice(0,8)} registrada com sucesso.`);setKey(uuid());queryClient.invalidateQueries({queryKey:['settlements']})}})
   const update=<K extends keyof PricingRequest>(key:K,value:PricingRequest[K])=>{setNotice('');setForm(current=>({...current,[key]:value}))}
   const submit=()=>settlement.mutate({idempotencyKey,assignorId,pricing:{...form,assetCurrency:form.assetCurrency.toUpperCase(),settlementCurrency:form.settlementCurrency.toUpperCase()}})
