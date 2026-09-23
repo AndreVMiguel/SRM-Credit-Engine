@@ -18,9 +18,18 @@ public class Currency {
     @Column(nullable = false)
     private boolean active;
 
-    protected Currency() {}
+    protected Currency() {
+    }
 
-    public String getCode() { return code; }
-    public String getName() { return name; }
-    public boolean isActive() { return active; }
+    public String getCode() {
+        return code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
 }

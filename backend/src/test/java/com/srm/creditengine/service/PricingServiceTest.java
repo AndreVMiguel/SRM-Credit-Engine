@@ -1,7 +1,48 @@
 package com.srm.creditengine.service;
-import com.srm.creditengine.dto.PricingRequest; import com.srm.creditengine.entity.ReceivableType; import com.srm.creditengine.strategy.*; import org.junit.jupiter.api.Test; import java.math.BigDecimal; import java.time.Instant; import java.time.LocalDate; import java.util.List; import static org.assertj.core.api.Assertions.assertThat; import static org.mockito.ArgumentMatchers.any; import static org.mockito.ArgumentMatchers.eq; import static org.mockito.Mockito.mock; import static org.mockito.Mockito.when;
+
+import com.srm.creditengine.dto.PricingRequest;
+import com.srm.creditengine.entity.ReceivableType;
+import com.srm.creditengine.strategy.*;
+import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 class PricingServiceTest {
-    @Test void acceptsSettlementDueToday(){var fx=mock(ExchangeRateService.class);when(fx.findRate(eq("BRL"),eq("BRL"),any(Instant.class))).thenReturn(BigDecimal.ONE);var service=new PricingService(List.of(new MercantileDuplicatePricingStrategy()),fx);var response=service.calculate(new PricingRequest(new BigDecimal("10.01"),LocalDate.now(java.time.ZoneOffset.UTC),ReceivableType.MERCANTILE_DUPLICATE,"BRL","BRL",BigDecimal.ZERO));assertThat(response.termDays()).isZero();assertThat(response.netAmount()).isEqualByComparingTo("10.0100");}
-    @Test void appliesDuplicateSpreadWithoutCurrencyConversion(){var fx=mock(ExchangeRateService.class);when(fx.findRate(eq("BRL"),eq("BRL"),any(Instant.class))).thenReturn(BigDecimal.ONE);var service=new PricingService(List.of(new MercantileDuplicatePricingStrategy(),new PostdatedCheckPricingStrategy()),fx);var response=service.calculate(new PricingRequest(new BigDecimal("1000"),LocalDate.now().plusDays(30),ReceivableType.MERCANTILE_DUPLICATE,"BRL","BRL",new BigDecimal("0.01")));assertThat(response.spreadMonthly()).isEqualByComparingTo("0.015");assertThat(response.netAmount()).isEqualByComparingTo("975.6098");}
-    @Test void appliesExchangeRateAtTheEnd(){var fx=mock(ExchangeRateService.class);when(fx.findRate(eq("BRL"),eq("USD"),any(Instant.class))).thenReturn(new BigDecimal("0.20"));var service=new PricingService(List.of(new MercantileDuplicatePricingStrategy()),fx);var response=service.calculate(new PricingRequest(new BigDecimal("1000"),LocalDate.now().plusDays(30),ReceivableType.MERCANTILE_DUPLICATE,"BRL","USD",BigDecimal.ZERO));assertThat(response.netAmount()).isEqualByComparingTo("197.0443");}
+    @Test
+    void acceptsSettlementDueToday() {
+        var fx = mock(ExchangeRateService.class);
+        when(fx.findRate(eq("BRL"), eq("BRL"), any(Instant.class))).thenReturn(BigDecimal.ONE);
+        var service = new PricingService(List.of(new MercantileDuplicatePricingStrategy()), fx);
+        var response = service.calculate(new PricingRequest(new BigDecimal("10.01"), LocalDate.now(java.time.ZoneOffset.UTC), ReceivableType.MERCANTILE_DUPLICATE, "BRL", "BRL", BigDecimal.ZERO));
+        assertThat(response.termDays()).isZero();
+        assertThat(response.netAmount()).isEqualByComparingTo("10.0100");
+    }
+
+    @Test
+    void appliesDuplicateSpreadWithoutCurrencyConversion() {
+        var fx = mock(ExchangeRateService.class);
+        when(fx.findRate(eq("BRL"), eq("BRL"), any(Instant.class))).thenReturn(BigDecimal.ONE);
+        var service = new PricingService(List.of(new MercantileDuplicatePricingStrategy(), new PostdatedCheckPricingStrategy()), fx);
+        var response = service.calculate(new PricingRequest(new BigDecimal("1000"), LocalDate.now().plusDays(30), ReceivableType.MERCANTILE_DUPLICATE, "BRL", "BRL", new BigDecimal("0.01")));
+        assertThat(response.spreadMonthly()).isEqualByComparingTo("0.015");
+        assertThat(response.netAmount()).isEqualByComparingTo("975.6098");
+    }
+
+    @Test
+    void appliesExchangeRateAtTheEnd() {
+        var fx = mock(ExchangeRateService.class);
+        when(fx.findRate(eq("BRL"), eq("USD"), any(Instant.class))).thenReturn(new BigDecimal("0.20"));
+        var service = new PricingService(List.of(new MercantileDuplicatePricingStrategy()), fx);
+        var response = service.calculate(new PricingRequest(new BigDecimal("1000"), LocalDate.now().plusDays(30), ReceivableType.MERCANTILE_DUPLICATE, "BRL", "USD", BigDecimal.ZERO));
+        assertThat(response.netAmount()).isEqualByComparingTo("197.0443");
+    }
 }

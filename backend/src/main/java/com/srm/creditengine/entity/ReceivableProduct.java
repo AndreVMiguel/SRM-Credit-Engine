@@ -1,6 +1,7 @@
 package com.srm.creditengine.entity;
 
 import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 
 @Entity
@@ -20,10 +21,22 @@ public class ReceivableProduct {
     @Column(nullable = false)
     private boolean active;
 
-    protected ReceivableProduct() {}
+    protected ReceivableProduct() {
+    }
 
-    public ReceivableType getType() { return type; }
-    public String getName() { return name; }
-    public BigDecimal getMonthlySpread() { return monthlySpread; }
-    public boolean isActive() { return active; }
+    public ReceivableType getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getMonthlySpread() {
+        return monthlySpread;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
 }
