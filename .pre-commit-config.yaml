@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: backend-tests
+        name: Backend - Maven tests
+        entry: 'cmd.exe /d /c "call backend\mvnw.cmd -q -f backend\pom.xml test"'
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
