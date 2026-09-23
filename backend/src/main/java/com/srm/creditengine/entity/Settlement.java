@@ -13,17 +13,20 @@ public class Settlement {
     private UUID id;
     @Column(nullable = false, unique = true, length = 80)
     private String idempotencyKey;
-    @Column(nullable = false)
-    private UUID assignorId;
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 30)
-    private ReceivableType receivableType;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "assignor_id", nullable = false)
+    private Assignor assignor;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "receivable_type", nullable = false)
+    private ReceivableProduct receivableProduct;
     @Column(nullable = false, precision = 19, scale = 4)
     private BigDecimal faceValue;
-    @Column(nullable = false, length = 3)
-    private String assetCurrency;
-    @Column(nullable = false, length = 3)
-    private String settlementCurrency;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "asset_currency", nullable = false)
+    private Currency assetCurrency;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "settlement_currency", nullable = false)
+    private Currency settlementCurrency;
     @Column(nullable = false)
     private LocalDate dueDate;
     @Column(nullable = false, precision = 12, scale = 8)
@@ -45,11 +48,11 @@ public class Settlement {
     protected Settlement() {
     }
 
-    public Settlement(String key, UUID assignorId, ReceivableType type, BigDecimal face, String assetCurrency, String settlementCurrency, LocalDate dueDate, BigDecimal baseRate, BigDecimal spread, BigDecimal exchangeRate, BigDecimal netAmount) {
+    public Settlement(String key, Assignor assignor, ReceivableProduct product, BigDecimal face, Currency assetCurrency, Currency settlementCurrency, LocalDate dueDate, BigDecimal baseRate, BigDecimal spread, BigDecimal exchangeRate, BigDecimal netAmount) {
         id = UUID.randomUUID();
         idempotencyKey = key;
-        this.assignorId = assignorId;
-        receivableType = type;
+        this.assignor = assignor;
+        receivableProduct = product;
         faceValue = face;
         this.assetCurrency = assetCurrency;
         this.settlementCurrency = settlementCurrency;
@@ -71,11 +74,11 @@ public class Settlement {
     }
 
     public UUID getAssignorId() {
-        return assignorId;
+        return assignor.getId();
     }
 
     public ReceivableType getReceivableType() {
-        return receivableType;
+        return receivableProduct.getType();
     }
 
     public BigDecimal getFaceValue() {
@@ -83,11 +86,11 @@ public class Settlement {
     }
 
     public String getAssetCurrency() {
-        return assetCurrency;
+        return assetCurrency.getCode();
     }
 
     public String getSettlementCurrency() {
-        return settlementCurrency;
+        return settlementCurrency.getCode();
     }
 
     public LocalDate getDueDate() {

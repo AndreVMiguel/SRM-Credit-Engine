@@ -11,10 +11,12 @@ import java.util.UUID;
 public class ExchangeRate {
     @Id
     private UUID id;
-    @Column(nullable = false, length = 3)
-    private String baseCurrency;
-    @Column(nullable = false, length = 3)
-    private String quoteCurrency;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "base_currency", nullable = false)
+    private Currency baseCurrency;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "quote_currency", nullable = false)
+    private Currency quoteCurrency;
     @Column(nullable = false, precision = 19, scale = 8)
     private BigDecimal rate;
     @Column(nullable = false)
@@ -23,7 +25,7 @@ public class ExchangeRate {
     protected ExchangeRate() {
     }
 
-    public ExchangeRate(String baseCurrency, String quoteCurrency, BigDecimal rate, Instant effectiveAt) {
+    public ExchangeRate(Currency baseCurrency, Currency quoteCurrency, BigDecimal rate, Instant effectiveAt) {
         this.id = UUID.randomUUID();
         this.baseCurrency = baseCurrency;
         this.quoteCurrency = quoteCurrency;
@@ -36,11 +38,11 @@ public class ExchangeRate {
     }
 
     public String getBaseCurrency() {
-        return baseCurrency;
+        return baseCurrency.getCode();
     }
 
     public String getQuoteCurrency() {
-        return quoteCurrency;
+        return quoteCurrency.getCode();
     }
 
     public BigDecimal getRate() {

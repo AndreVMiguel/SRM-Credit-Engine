@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 public record PricingRequest(@NotNull @DecimalMin("0.01") BigDecimal faceValue, @NotNull LocalDate dueDate,
                              @NotNull ReceivableType receivableType,
-                             @NotBlank @Pattern(regexp = "[A-Za-z]{3}") String assetCurrency,
-                             @NotBlank @Pattern(regexp = "[A-Za-z]{3}") String settlementCurrency,
+                             @NotBlank @Pattern(regexp = "(?i)^(BRL|USD)$", message = "must be BRL or USD") String assetCurrency,
+                             @NotBlank @Pattern(regexp = "(?i)^(BRL|USD)$", message = "must be BRL or USD") String settlementCurrency,
                              @NotNull @DecimalMin("0.0") BigDecimal baseRateMonthly) {
 }

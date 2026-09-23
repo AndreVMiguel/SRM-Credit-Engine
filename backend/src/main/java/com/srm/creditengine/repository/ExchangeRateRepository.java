@@ -7,5 +7,5 @@ import java.time.Instant;
 import java.util.*;
 
 public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, UUID> {
-    Optional<ExchangeRate> findFirstByBaseCurrencyAndQuoteCurrencyAndEffectiveAtLessThanEqualOrderByEffectiveAtDesc(String base, String quote, Instant at);
+    Optional<ExchangeRate> findFirstByBaseCurrencyCodeAndQuoteCurrencyCodeAndEffectiveAtLessThanEqualOrderByEffectiveAtDesc(String base, String quote, Instant at);
 }

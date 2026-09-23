@@ -107,6 +107,12 @@ Extrato: `GET /api/v1/settlements?from=2026-09-01T00:00:00Z&to=2026-10-01T00:00:
 
 Valores monetários usam `BigDecimal` e `NUMERIC`. A liquidação é ACID, possui chave única de idempotência e `@Version` para controle otimista. O schema é versionado pelo Flyway; o Hibernate apenas valida a estrutura.
 
+## Modelagem de dados
+
+O modelo normalizado separa os cadastros de `assignors`, `currencies` e `receivable_products` dos fatos financeiros `settlements` e `exchange_rates`. As chaves estrangeiras garantem que não sejam persistidas liquidações com cedente, produto ou moeda inexistente.
+
+Consulte o [diagrama ER](docs/er-diagram.md) para ver entidades, cardinalidades e chaves. A migração `V3__normalize_reference_data.sql` preserva os registros existentes, cria os cadastros correspondentes e só então adiciona as restrições referenciais.
+
 ## Fórmula
 
 `VP = Valor de face / (1 + taxa base mensal + spread mensal) ^ (dias / 30)`
